@@ -27,6 +27,7 @@ package me.lucko.luckperms.bukkit;
 
 import me.lucko.luckperms.common.sender.Sender;
 import me.lucko.luckperms.common.sender.SenderFactory;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.luckperms.api.util.Tristate;
@@ -63,6 +64,10 @@ public class BukkitSenderFactory extends SenderFactory<LPBukkitPlugin, CommandSe
 
     @Override
     protected void sendMessage(CommandSender sender, Component message) {
+        if (sender instanceof Audience) {
+            ((Audience) sender).sendMessage(message);
+            return;
+        }
         // we can safely send async for players and the console - otherwise, send it sync
         if (sender instanceof Player || sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender) {
             this.audiences.sender(sender).sendMessage(message);
